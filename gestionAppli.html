@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestion du jardin</title>
+    <link rel="stylesheet" href="resources/bootstrap-3.3.7-dist/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="resources/bootstrap-3.3.7-dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="resources/css/styles.css">
+</head>
+<body>
+<script src="resources/js/jquery-3.1.1.min.js"></script>
+<script src="resources/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+
+<div class="container-fluid admin text-center">
+    <h1 class="h1">Gestion du jardin</h1>
+</div>
+
+<div id="exTab1">
+    <ul class="nav nav-pills">
+        <li class="active">
+            <a href="#1a" data-toggle="tab"><h1><span class="glyphicon glyphicon-lamp"></span> - Eclairage</h1>
+            </a>
+        </li>
+        <li>
+            <a href="#2a" data-toggle="tab"><h1><span class="glyphicon glyphicon-tree-deciduous"></span> - Arrosage</h1>
+            </a>
+        </li>
+        <li>
+            <a href="#3a" data-toggle="tab"><h1><span class=" glyphicon glyphicon-wrench"></span> - Equipements</h1>
+            </a>
+        </li>
+    </ul>
+
+    <div class="tab-content clearfix">
+        <div class="tab-pane active" id="1a">
+            <div class="container-fluid eclairage" data-entity-type="light" data-entity-id="A">
+                <div class="section-title">
+                    <button class="btn btn-default float-right btn-refresh"><span class="glyphicon glyphicon-refresh"></span>
+                    </button>
+                    <h1>Eclairage 1</h1>
+                </div>
+                <div class="col-md-6 col-xs-12 text-center">
+                    <h2>Allumage</h2>
+                    <div data-action="turnon" class="button button-switch button-off col-xs-12 col-md-6">Allumer</div>
+                    <div data-action="turnoff" class="button button-switch button-on  col-xs-12 col-md-6">Eteindre</div>
+                </div>
+                <div class="col-md-6 col-xs-12 text-center">
+                    <h2>Etat : <img src="resources/img/default.svg" class="loader"></h2>
+                    <div data-action="swap" class="button button-switch button-on">Changer Etat</div>
+                </div>
+            </div>
+            <div class="container-fluid eclairage" data-entity-type="light" data-entity-id="B">
+                <div class="section-title">
+                    <button class="btn btn-default float-right btn-refresh"><span class="glyphicon glyphicon-refresh"></span>
+                    </button>
+                    <h1>Eclairage 2</h1>
+                </div>
+                <div class="col-md-6 col-xs-12 text-center">
+                    <h2>Allumage</h2>
+                    <div data-action="turnon" class="button button-switch button-off col-xs-12 col-md-6">Allumer</div>
+                    <div data-action="turnoff" class="button button-switch button-on  col-xs-12 col-md-6">Eteindre</div>
+                </div>
+                <div class="col-md-6 col-xs-12 text-center">
+                    <h2>Etat : <img src="resources/img/default.svg" class="loader"></h2>
+                    <div data-action="swap" class="button button-switch button-on">Changer Etat</div>
+                </div>
+            </div>
+            <div class="container-fluid eclairage" data-entity-type="light" data-entity-id="C">
+                <div class="section-title">
+                    <button class="btn btn-default float-right btn-refresh"><span class="glyphicon glyphicon-refresh"></span>
+                    </button>
+                    <h1>Eclairage 3</h1>
+                </div>
+                <div class="col-md-6 col-xs-12 text-center">
+                    <h2>Allumage</h2>
+                    <div data-action="turnon" class="button button-switch button-off col-xs-12 col-md-6">Allumer</div>
+                    <div data-action="turnoff" class="button button-switch button-on  col-xs-12 col-md-6">Eteindre</div>
+                </div>
+                <div class="col-md-6 col-xs-12 text-center">
+                    <h2>Etat : <img src="resources/img/default.svg" class="loader"></h2>
+                    <div data-action="swap" class="button button-switch button-on">Changer Etat</div>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane" id="2a">
+            <div class="container-fluid arrosage"  data-entity-type="zone" data-entity-id="A">
+                <div class="section-title">
+                    <button class="btn btn-default float-right btn-refresh"><span class="glyphicon glyphicon-refresh"></span>
+                    </button>
+                    <h1>Arrosage 1</h1>
+                </div>
+                <div class="col-md-6 col-xs-12 text-center">
+                    <h2>Irriguer</h2>
+                    <div class="col-xs-12 col-md-6">
+                        <input type="number" min="0" class="col-xs-12 col-md-6 irrigation-input"/>
+                        <p class="unit">Litres</p>
+                    </div>
+
+                    <div class="button button-switch button-off  col-xs-12 col-md-6" data-action="irrigate">Envoyer
+                    </div>
+                </div>
+                <div class="col-xs-12 col-md-6 text-center">
+                    <div class="container-fluid">
+                        <h2 class="col-xs-12 col-md-6">Etat :</h2>
+                        <div class="col-xs-12 col-md-6">
+                            <img src="resources/img/default-red.svg" class="loader-big">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="container-fluid arrosage"   data-entity-type="zone" data-entity-id="B">
+                <div class="section-title">
+                    <h1>Arrosage 2</h1>
+                    <button class="btn btn-default float-right btn-refresh"><span class="glyphicon glyphicon-refresh"></span>
+                    </button>
+                </div>
+                <div class="col-md-6 col-xs-12 text-center">
+                    <h2>Irriguer</h2>
+                    <div class="col-xs-12 col-md-6">
+                        <input type="number" min="0" class="col-xs-12 col-md-6 irrigation-input"/>
+                        <p class="unit">Litres</p>
+                    </div>
+                    <div class="button button-switch button-off  col-xs-12 col-md-6" data-action="irrigate">Envoyer
+                    </div>
+                </div>
+                <div class="col-xs-12 col-md-6 text-center">
+                    <div class="container-fluid">
+                        <h2 class="col-xs-12 col-md-6">Etat :</h2>
+                        <div class="col-xs-12 col-md-6">
+                            <img src="resources/img/default-red.svg" class="loader-big">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="container-fluid arrosage"   data-entity-type="zone" data-entity-id="C">
+                <div class="section-title">
+                    <h1>Arrosage 3</h1>
+                    <button class="btn btn-default float-right btn-refresh"><span class="glyphicon glyphicon-refresh"></span>
+                    </button>
+                </div>
+                <div class="col-md-6 col-xs-12 text-center">
+                    <h2>Irriguer</h2>
+                    <div class="col-xs-12 col-md-6">
+                        <input type="number" min="0" class="col-xs-12 col-md-6 irrigation-input"/>
+                        <p class="unit">Litres</p>
+                    </div>
+
+                    <div class="button button-switch button-off  col-xs-12 col-md-6" data-action="irrigate">Envoyer
+                    </div>
+                </div>
+                <div class="col-xs-12 col-md-6 text-center">
+                    <div class="container-fluid">
+                        <h2 class="col-xs-12 col-md-6">Etat :</h2>
+                        <div class="col-xs-12 col-md-6">
+                            <img src="resources/img/default-red.svg" class="loader-big">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane" id="3a">
+            <div class="container equipements" data-entity-type="equipment" data-entity-id="pump">
+                <div class="section-title">
+                    <button class="btn btn-default float-right btn-refresh"><span class="glyphicon glyphicon-refresh"></span>
+                    </button>
+                    <h1>Pompe</h1>
+                </div>
+                <div class="text-center">
+                    <h2 class="col-md-6 col-xs-12 no-margin">Etat :</h2>
+                    <div><img src="resources/img/default-yellow.svg" class="loader-big"></div>
+                </div>
+            </div>
+            <div class="container equipements" data-entity-type="equipment" data-entity-id="tank">
+                <div class="section-title">
+                    <button class="btn btn-default float-right btn-refresh"><span class="glyphicon glyphicon-refresh"></span>
+                    </button>
+                    <h1>Cuve</h1>
+                </div>
+                <div class="text-center">
+                    <h2 class="col-md-6 col-xs-12 no-margin">Etat :</h2>
+                    <div>
+                    <img src="resources/img/default-yellow.svg" class="loader-big">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script src="resources/js/styles.js"></script>
+<script src="resources/js/requests.js"></script>
+
+</body>
+</html>
