@@ -116,3 +116,8 @@ input[type="number"] {
 .container-fluid > div.col-md-6.col-xs-12 > span.glyphicon{
     font-size: 55px;
 }
+
+.button[data-action="swap"]{
+    color: #2257ff;
+    border-color: #2257ff;
+}

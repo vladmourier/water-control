@@ -17,10 +17,10 @@ var iFrequency = 1000; // expressed in miliseconds
 var myInterval = 0;
 
 var destURLDistant = "http://192.168.20.104/biteau_mourier/waterControl.php";
-var destURLLocal =         "http://localhost/water-control/waterControl.php";
+var destURLLocal = "http://localhost/water-control/waterControl.php";
 
 var irrigation_destURLDistant = "http://192.168.20.104/biteau_mourier/IrrigationControl.php";
-var irrigation_destURLLocal =         "http://localhost/water-control/IrrigationControl.php";
+var irrigation_destURLLocal = "http://localhost/water-control/IrrigationControl.php";
 
 var method = "GET";
 
@@ -65,10 +65,7 @@ function refresh_button() {
  *      Listeners
  * *******************************************************************************************************************/
 
-/**
- * Gère les boutons "Changer état" pour les éclairages
- */
-$('.button[data-action="swap"]').click(function () {
+var listenToSwap = function () {
     var button_clicked = $(this);
     var parent = button_clicked.parent();
 
@@ -102,12 +99,9 @@ $('.button[data-action="swap"]').click(function () {
         error: err_handling
     });
 
-});
+};
 
-/**
- * Gère les boutons allumer/éteindre pour les éclairages
- */
-$('.button-switch[data-action="turnon"], .button-switch[data-action="turnoff"]').click(function () {
+var listenToTurnonTurnoff = function () {
     var button_clicked = $(this);
     var grandparent = button_clicked.parent().parent();
 
@@ -140,48 +134,54 @@ $('.button-switch[data-action="turnon"], .button-switch[data-action="turnoff"]')
         error: err_handling
     });
 
-});
+};
 
-/**
- * Gère l'irrigation des trois zones
- */
-$('.button[data-action="irrigate"]').click(function () {
+var listenToIrrigate = function () {
     var button_clicked = $(this);
     var grandparent = button_clicked.parent().parent();
 
     var form = $(this).parent().children('div:nth-child(2)').children('.irrigation-input');
+    if (!button_clicked.hasClass('button-on')) {
 
-    params = {//Paramètres de la requête AJAX
-        entityType: grandparent.attr('data-entity-type'),//type : "zone"
-        entityId: grandparent.attr('data-entity-id'),// {A, B, C}
-        dataAction: $(this).attr('data-action'),// action => irrigate
-        quantity: form.val()// Liters to send
-    };
+        params = {//Paramètres de la requête AJAX
+            entityType: grandparent.attr('data-entity-type'),//type : "zone"
+            entityId: grandparent.attr('data-entity-id'),// {A, B, C}
+            dataAction: $(this).attr('data-action'),// action => irrigate
+            quantity: form.val()// Liters to send
+        };
 
-    var node = grandparent.children('div:nth-child(3)');
-    node = node.children('.container-fluid').children('div');
+        if (form.val()) {
+            var node = grandparent.children('div:nth-child(3)');
+            node = node.children('.container-fluid').children('div');
 
-    $.ajax({
-        url: irrigation_destURLLocal,
-        type: method,
-        dataType: 'jsonp',
-        data: params,
-        success: function (code, statut) {
-            node.empty();
-            node.append(ICON_COG);//Traitement en cours
 
-            setTimeout(//Réindique l'état "prêt" lorsque l'irrigation est terminée
-                function () {
+            $.ajax({
+                url: irrigation_destURLLocal,
+                type: method,
+                dataType: 'jsonp',
+                data: params,
+                success: function (code, statut) {
+                    var buttons = $('#2a  .arrosage  .button-off');
+                    buttons.removeClass('button-off').addClass('button-on').css('cursor', 'not-allowed');
                     node.empty();
-                    node.append(ICON_OK);
-                }, getIrrigationTime(params.quantity)*1000);
-        },
+                    node.append(ICON_COG);//Traitement en cours
+                    setTimeout(//Réindique l'état "prêt" lorsque l'irrigation est terminée
+                        function () {
+                            buttons.removeClass('button-on').addClass('button-off').css('cursor', 'pointer');
+                            node.empty();
+                            node.append(ICON_OK);
+                        }, getIrrigationTime(params.quantity) * 1000);
+                },
 
-        error: err_handling
-    });
-});
+                error: err_handling
+            });
+        } else {
+            alert("Veuillez indiquer une valeur")
+        }
+    }
+};
 
-$('.btn-refresh').click(function () {
+var listenToRefresh = function () {
     var self = this;
     var button_clicked = $(this);
     var grandparent = button_clicked.parent().parent();
@@ -242,7 +242,24 @@ $('.btn-refresh').click(function () {
 
         error: err_handling
     });
-});
+};
+
+/**
+ * Gère les boutons "Changer état" pour les éclairages
+ */
+$('.button[data-action="swap"]').click(listenToSwap);
+
+/**
+ * Gère les boutons allumer/éteindre pour les éclairages
+ */
+$('.button-switch[data-action="turnon"], .button-switch[data-action="turnoff"]').click(listenToTurnonTurnoff);
+
+/**
+ * Gère l'irrigation des trois zones
+ */
+$('.button[data-action="irrigate"]').click(listenToIrrigate);
+
+$('.btn-refresh').click(listenToRefresh);
 
 
 /** *******************************************************************************************************************
