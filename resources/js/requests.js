@@ -8,6 +8,8 @@
  * *******************************************************************************************************************/
 var ICON_OK = "<span class='glyphicon glyphicon-ok-circle'></span>";
 var ICON_REMOVE = "<span class='glyphicon glyphicon-remove-circle'></span>";
+var ICON_OK_BIG = "<span class='glyphicon glyphicon-ok-circle icon-big'></span>";
+var ICON_REMOVE_BIG = "<span class='glyphicon glyphicon-remove-circle icon-big'></span>";
 var ICON_COG = '<img class="loader loader-big" src="resources/img/gear.svg"> En cours d\'utilisation';
 
 var IRRIGATION_FACTOR = 2;
@@ -30,6 +32,7 @@ var method = "GET";
  * *******************************************************************************************************************/
 
 var err_handling = function (resultat, statut, erreur) {
+    alert("Une erreur est survenue");
     console.log("ERREUR");
     console.log(resultat);
     console.log(statut);
@@ -53,7 +56,10 @@ function refresh_button() {
     // (do something here)
     var buttons = $('.btn-refresh');
     buttons.eq(i).trigger('click');
-    if (i == buttons.length - 1) {
+    if (i === 3) {
+        i += 3;
+    }
+    if (i === buttons.length - 1) {
         i = 0;
         clearInterval(myInterval);//Stop
     }
@@ -89,7 +95,7 @@ var listenToSwap = function () {
         data: params,
         success: function (code, status) {
             node.children().remove();
-            if (code.isOn == true) {
+            if (code.isOn === true) {
                 node.append(ICON_OK);
             } else {
                 node.append(ICON_REMOVE);
@@ -124,7 +130,7 @@ var listenToTurnonTurnoff = function () {
         success: function (code, statut) {
             node.children().remove();
 
-            if (code.isOn == true) {
+            if (code.isOn === true) {
                 node.append(ICON_OK);
             } else {
                 node.append(ICON_REMOVE);
@@ -154,6 +160,10 @@ var listenToIrrigate = function () {
             var node = grandparent.children('div:nth-child(3)');
             node = node.children('.container-fluid').children('div');
 
+            var buttons = $('#2a  .arrosage  .button-off');
+            buttons.removeClass('button-off').addClass('button-on').css('cursor', 'not-allowed');
+            node.empty();
+            node.append(ICON_COG);//Traitement en cours
 
             $.ajax({
                 url: irrigation_destURLLocal,
@@ -161,16 +171,16 @@ var listenToIrrigate = function () {
                 dataType: 'jsonp',
                 data: params,
                 success: function (code, statut) {
-                    var buttons = $('#2a  .arrosage  .button-off');
-                    buttons.removeClass('button-off').addClass('button-on').css('cursor', 'not-allowed');
+                    //Réindique l'état
+                    buttons.removeClass('button-on').addClass('button-off').css('cursor', 'pointer');
                     node.empty();
-                    node.append(ICON_COG);//Traitement en cours
-                    setTimeout(//Réindique l'état "prêt" lorsque l'irrigation est terminée
-                        function () {
-                            buttons.removeClass('button-on').addClass('button-off').css('cursor', 'pointer');
-                            node.empty();
-                            node.append(ICON_OK);
-                        }, getIrrigationTime(params.quantity) * 1000);
+                    if (code.code > 1) {
+                        node.append(ICON_REMOVE + "L'irrigation a rencontré un problème. Contrôlez le réservoir d'eau");
+                    } else {
+                        // "prêt" lorsque l'irrigation est terminée
+                        node.append(ICON_OK);
+                    }
+
                 },
 
                 error: err_handling
@@ -194,13 +204,13 @@ var listenToRefresh = function () {
     };
 
     var node;
-    if (params.entityType == "light") {
+    if (params.entityType === "light") {
         node = grandparent.children('div:nth-child(3)');
         node = node.children('h2');
-    } else if (params.entityType == "zone") {
+    } else if (params.entityType === "zone") {
         node = grandparent.children('div:nth-child(3)');
         node = node.children('.container-fluid').children('div');
-    } else if (params.entityType == "equipment") {
+    } else if (params.entityType === "equipment") {
         node = grandparent.children('div:nth-child(2)').children('div');
     }
 
@@ -217,22 +227,42 @@ var listenToRefresh = function () {
                 node.empty();
             else node.children().remove();
 
-            if (params.entityType == "light") {
-                if (code.status == 1)
+            if (params.entityType === "light") {
+                if (code.status === 1)
                     node.append(ICON_OK);//Lumière allumée
                 else
                     node.append(ICON_REMOVE);//Lumière éteinte
-            } else if (params.entityType == "zone") {
-                //TODO : si la zone est prête mettre icon_ok, sinon icon_cog
-                node.append(ICON_COG)
-            } else if (params.entityType == "equipment") {
-                if (params.entityId == "tank") {
-                    if (code.status == 1)
-                        node.append(ICON_REMOVE + " Cuve vide");
+            } else if (params.entityType === "zone") {
+                if (code.status === 4) {
+                    $('div.arrosage:nth-child(1) > div:nth-child(3) > div:nth-child(1) > div:nth-child(2)').append(ICON_COG);
+                    $('div.arrosage:nth-child(2) > div:nth-child(3) > div:nth-child(1) > div:nth-child(2)').empty().append(ICON_OK);
+                    $('div.arrosage:nth-child(3) > div:nth-child(3) > div:nth-child(1) > div:nth-child(2)').empty().append(ICON_OK);
+                    $('div.container:nth-child(1) > div:nth-child(2) > div:nth-child(2)').empty().append(ICON_COG);
+                } else if (code.status === 5) {
+                    $('div.arrosage:nth-child(1) > div:nth-child(3) > div:nth-child(1) > div:nth-child(2)').empty().append(ICON_OK);
+                    $('div.arrosage:nth-child(2) > div:nth-child(3) > div:nth-child(1) > div:nth-child(2)').append(ICON_COG);
+                    $('div.arrosage:nth-child(3) > div:nth-child(3) > div:nth-child(1) > div:nth-child(2)').empty().append(ICON_OK);
+                    $('div.container:nth-child(1) > div:nth-child(2) > div:nth-child(2)').empty().append(ICON_COG);
+                } else if (code.status === 6) {
+                    $('div.arrosage:nth-child(1) > div:nth-child(3) > div:nth-child(1) > div:nth-child(2)').empty().append(ICON_OK);
+                    $('div.arrosage:nth-child(2) > div:nth-child(3) > div:nth-child(1) > div:nth-child(2)').empty().append(ICON_OK);
+                    $('div.arrosage:nth-child(3) > div:nth-child(3) > div:nth-child(1) > div:nth-child(2)').append(ICON_COG);
+                    $('div.container:nth-child(1) > div:nth-child(2) > div:nth-child(2)').empty().append(ICON_COG);
+                }
+                else {
+                    $('div.arrosage:nth-child(1) > div:nth-child(3) > div:nth-child(1) > div:nth-child(2)').empty().append(ICON_OK);
+                    $('div.arrosage:nth-child(2) > div:nth-child(3) > div:nth-child(1) > div:nth-child(2)').empty().append(ICON_OK);
+                    $('div.arrosage:nth-child(3) > div:nth-child(3) > div:nth-child(1) > div:nth-child(2)').empty().append(ICON_OK);
+                    $('div.container:nth-child(1) > div:nth-child(2) > div:nth-child(2)').empty().append(ICON_OK_BIG);
+                }
+            } else if (params.entityType === "equipment") {
+                if (params.entityId === "tank") {
+                    if (code.status === 1)
+                        node.append(ICON_REMOVE_BIG + " Cuve vide");
                     else
-                        node.append(ICON_OK + " Cuve prête");
+                        node.append(ICON_OK_BIG + " Cuve prête");
                 } else {
-                    if (code.status == 1)
+                    if (code.status === 1)
                         node.append(ICON_COG);
                     else
                         node.append(ICON_OK + " Prêt");

@@ -40,6 +40,11 @@ if ($method == "GET") {
                 echo Utils::getStatus(Utils::ENTITY_TYPE_LIGHT, $params['entityId']);
             }
             break;
+        case Utils::ENTITY_TYPE_ZONE://Si l'action concerne une zone à irriguer (A, B, C)
+            if (strcmp($params['dataAction'], "getStatus") == 0) {//S'il s'agit d'obtenir l'état de la zone (en arrosage/disponible)
+                echo Utils::getStatus(Utils::ENTITY_TYPE_ZONE, $params['entityId']);
+            }
+            break;
     }
 }
 echo ');';

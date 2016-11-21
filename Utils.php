@@ -55,30 +55,27 @@ class Utils
      */
     public static function getStatus($entityType, $entityId)
     {
-        if ($entityId !== "pump") {
-            //Todo : fonction qui indique l'état de l'élément courant (Zone, Eclairage, pompe, compteur d'eau
-            $port = Utils::getGPIOPort($entityType, $entityId);
-            exec("sudo /home/pi/goutte/pulsecheck $port", $output, $myvar);
-            return json_encode(
-                [
-                    Utils::key_entity_type => Utils::ENTITY_TYPE_LIGHT,
-                    Utils::key_entity_id => $entityId,
-                    'status' => $myvar
-                ]
-            );
-        } else {
+        if ($entityId === "pump" || $entityType === "zone") {
 
-            exec("sudo /home/pi/goutte/pulsecheck 4", $output, $myvar1);
-            exec("sudo /home/pi/goutte/pulsecheck 5", $output, $myvar2);
-            exec("sudo /home/pi/goutte/pulsecheck 6", $output, $myvar3);
+            exec("sudo /home/pi/goutte/pulsecheckwater", $output, $myvar1);
 
             return json_encode(
                 [
                     Utils::key_entity_type => Utils::ENTITY_TYPE_EQUIPMENT,
                     Utils::key_entity_id => $entityId,
-                    'status' => ($myvar1 == 1 || $myvar2 == 1 || $myvar3 == 1) ? 1 : 0
+                    'status' => $myvar1
                 ]
             );
+        } else  {
+            //fonction qui indique l'état de l'élément courant (Zone, Eclairage, pompe, compteur d'eau
+            $port = Utils::getGPIOPort($entityType, $entityId);
+            exec("sudo /home/pi/goutte/pulsecheck $port", $output, $myvar);
+            return json_encode(
+                [Utils::key_entity_type => Utils::ENTITY_TYPE_LIGHT,
+                    Utils::key_entity_id => $entityId,
+                    'status' => $myvar]
+            );
+
         }
     }
 
@@ -88,7 +85,8 @@ class Utils
      * @param $entityId
      * @return string représentation JSON De l'objet mis à jour
      */
-    public static function eclairage_allumer($entityId)
+    public
+    static function eclairage_allumer($entityId)
     {
         //Todo: allumer l'éclairage concerné
         $port = Utils::getGPIOPort(Utils::ENTITY_TYPE_LIGHT, $entityId);
@@ -107,7 +105,8 @@ class Utils
      * @param $entityId
      * @return string représentation JSON de l'objet mis à jour
      */
-    public static function eclairage_eteindre($entityId)
+    public
+    static function eclairage_eteindre($entityId)
     {
         //Todo : eteindre l'éclairage concerné
         $port = Utils::getGPIOPort(Utils::ENTITY_TYPE_LIGHT, $entityId);
@@ -125,7 +124,8 @@ class Utils
      * Change l'état de l'éclairage désigné
      * @param $entityId
      */
-    public static function eclairage_changerEtat($entityId)
+    public
+    static function eclairage_changerEtat($entityId)
     {
         //Todo : Affecter un nouvel état à l'éclairage concerné
         $port = Utils::getGPIOPort(Utils::ENTITY_TYPE_LIGHT, $entityId);
@@ -145,13 +145,20 @@ class Utils
      * @param $Quantite
      * @return string
      */
-    public static function arroser($Zone, $Quantite)
+    public
+    static function arroser($Zone, $Quantite)
     {
         //Todo : ordonner au serveur d'arroser Zone avec Quantité d'eau
         $port_zone = Utils::getGPIOPort(Utils::ENTITY_TYPE_ZONE, $Zone);
         $port_tank = Utils::getGPIOPort(Utils::ENTITY_TYPE_EQUIPMENT, 'tank');
         exec("sudo /home/pi/goutte/pulsewater $port_zone  $Quantite $port_tank", $output, $myvar);
-        return Utils::getStatus(Utils::ENTITY_TYPE_ZONE, $Zone);
+        return json_encode(
+            [
+                Utils::key_entity_type => Utils::ENTITY_TYPE_ZONE,
+                Utils::key_entity_id => $Zone,
+                'code' => $myvar
+            ]
+        );
     }
 
 }
